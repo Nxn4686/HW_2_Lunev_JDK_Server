@@ -1,0 +1,98 @@
+Напиши на JAVA метод, который сохраняет в файл текст и выводит его потом в JTextArea
+
+
+Вот пример метода на языке Java, который сохраняет текст в файл и потом выводит его в компонент `JTextArea`.
+
+Для этого нам понадобится:
+
+1. Метод для сохранения текста в файл.
+2. Метод для чтения текста из файла.
+3. Компонент `JTextArea` для отображения текста.
+
+Пример:
+
+```java
+import javax.swing.*;
+import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class TextFileSaver {
+
+    // Метод для сохранения текста в файл
+    public static void saveTextToFile(String text, String filePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(text);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Метод для чтения текста из файла
+    public static String readTextFromFile(String filePath) {
+        StringBuilder text = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                text.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return text.toString();
+    }
+
+    // Пример использования в GUI с JTextArea
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Text File Saver");
+        JTextArea textArea = new JTextArea(20, 40);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        JButton saveButton = new JButton("Save Text");
+        JButton loadButton = new JButton("Load Text");
+
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+        frame.add(scrollPane);
+        frame.add(saveButton);
+        frame.add(loadButton);
+
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String textToSave = textArea.getText();
+                saveTextToFile(textToSave, "output.txt");
+            }
+        });
+
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String textFromFile = readTextFromFile("output.txt");
+                textArea.setText(textFromFile);
+            }
+        });
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+}
+```
+
+### Объяснение:
+1. **Метод `saveTextToFile`**:
+    - Принимает текст и путь к файлу.
+    - Использует `BufferedWriter` для записи текста в файл.
+
+2. **Метод `readTextFromFile`**:
+    - Принимает путь к файлу.
+    - Использует `BufferedReader` для чтения текста из файла и возвращает его в виде строки.
+
+3. **GUI (графический интерфейс)**:
+    - Создаём окно с двумя кнопками (сохранить и загрузить текст) и компонентом `JTextArea` для отображения текста.
+    - Кнопка "Save Text" сохраняет содержимое `JTextArea` в файл.
+    - Кнопка "Load Text" загружает содержимое файла и выводит его в `JTextArea`.
+
+### Как работает:
+1. Пользователь вводит текст в `JTextArea`.
+2. При нажатии кнопки "Save Text" текст сохраняется в файл `output.txt`.
+3. При нажатии кнопки "Load Text" текст из файла загружается и отображается в `JTextArea`.
